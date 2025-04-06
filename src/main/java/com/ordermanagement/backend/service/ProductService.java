@@ -4,25 +4,21 @@ package com.ordermanagement.backend.service;
 import com.ordermanagement.backend.common.ProductPayload;
 import com.ordermanagement.backend.model.Product;
 import com.ordermanagement.backend.repository.ProductRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Service class for managing Product-related business logic and database operations.
  */
 
 @Service
+@AllArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
-
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
 
     /**
      * Retrieve all products.
@@ -67,11 +63,18 @@ public class ProductService {
      * @param product Updated product data
      * @return Optional containing the updated product if found, empty otherwise
      */
-    public Optional<Product> updateProduct(Long id, Product product) {
+    public Optional<Product> updateProduct(Long id, ProductPayload product) {
+        Product productToUpdate = new Product();
+        productToUpdate.setId(id);
+        productToUpdate.setName(product.name());
+        productToUpdate.setType(product.type());
+        productToUpdate.setStock(product.stock());
+        productToUpdate.setSupplier(product.supplier());
+
         return productRepository.findById(id)
                 .map(existingProduct -> {
-                    product.setId(id); // Ensure the ID remains unchanged
-                    return productRepository.save(product);
+                    productToUpdate.setId(id); // Ensure the ID remains unchanged
+                    return productRepository.save(productToUpdate);
                 });
     }
 

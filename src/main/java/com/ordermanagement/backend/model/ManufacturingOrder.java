@@ -1,7 +1,9 @@
 package com.ordermanagement.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ordermanagement.backend.common.ProductType;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ordermanagement.backend.common.ManufacturingOrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -9,10 +11,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 /**
- * Java class presents the Product entity with all the required verifications
+ * Represents a manufacturing order tied to a specific product.
  */
 
 @Entity
@@ -23,28 +24,29 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Product {
+public class ManufacturingOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String project;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ProductType type;
+    private ManufacturingOrderStatus status;
 
     @Column(nullable = false)
-    private int stock;
+    private int quantity;
 
     @Column(nullable = false)
-    private String supplier;
+    private LocalDateTime date;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private Set<ManufacturingOrder> manufacturingOrders;
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
 
     @CreatedDate
     @Column(updatable = false, nullable = false)

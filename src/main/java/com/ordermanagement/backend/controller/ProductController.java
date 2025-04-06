@@ -5,6 +5,7 @@ import com.ordermanagement.backend.common.ProductPayload;
 import com.ordermanagement.backend.model.Product;
 import com.ordermanagement.backend.service.ProductService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -18,20 +19,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
+@AllArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     /**
      * Retrieve all products.
      *
      * @return List of all products
      */
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.ok(this.productService.findAllProducts());
     }
@@ -42,7 +40,7 @@ public class ProductController {
      * @param payload Payload to create
      * @return Created product
      */
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<Product> createProduct(
             @Valid @RequestBody ProductPayload payload
     ) {
@@ -50,6 +48,33 @@ public class ProductController {
         return ResponseEntity.ok(savedProduct);
     }
 
+    /**
+     * Retrieve a product by its ID.
+     *
+     * @param id Product ID
+     * @return ResponseEntity containing the product if found, or 404 Not Found
+     */
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductPayload payload
+    ) {
+        return this.productService.updateProduct(id, payload)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Delete a product by its ID.
+     *
+     * @param id Product ID
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+        this.productService.deleteProduct(id);
+        return ResponseEntity.ok("Product deleted successfully");
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
