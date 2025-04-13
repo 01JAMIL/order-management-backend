@@ -2,7 +2,9 @@ package com.ordermanagement.backend.service;
 
 import com.ordermanagement.backend.common.EmployeePayload;
 import com.ordermanagement.backend.model.Employee;
+import com.ordermanagement.backend.model.Machine;
 import com.ordermanagement.backend.repository.EmployeeRepository;
+import com.ordermanagement.backend.repository.MachineRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final MachineRepository machineRepository;
 
     /**
      * Retrieve all employees.
@@ -36,9 +39,15 @@ public class EmployeeService {
      */
     @Transactional
     public Employee saveEmployee(EmployeePayload payload) {
+
+        Machine machine = machineRepository.findById(payload.machineId())
+                .orElseThrow(() -> new IllegalArgumentException("Machine not found with ID: " + payload.machineId()));
+
+
         Employee employee = new Employee();
         employee.setName(payload.name());
         employee.setPosition(payload.position());
+        employee.setEmployeeMachine(machine);
 
         return this.employeeRepository.save(employee);
     }
@@ -62,10 +71,16 @@ public class EmployeeService {
      */
     @Transactional
     public Optional<Employee> updateEmployee(Long id, EmployeePayload payload) {
+
+        Machine machine = machineRepository.findById(payload.machineId())
+                .orElseThrow(() -> new IllegalArgumentException("Machine not found with ID: " + payload.machineId()));
+
+
         Employee employeeToUpdate = new Employee();
         employeeToUpdate.setId(id);
         employeeToUpdate.setName(payload.name());
         employeeToUpdate.setPosition(payload.position());
+        employeeToUpdate.setEmployeeMachine(machine);
 
         return this.employeeRepository.findById(id)
                 .map(existingEmployee -> {

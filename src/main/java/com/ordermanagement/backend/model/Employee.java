@@ -35,6 +35,11 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     private EmployeePosition position;
 
+    @ManyToOne
+    @JoinColumn(name = "machine_id", nullable = false)
+    private Machine employeeMachine;
+
+
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;

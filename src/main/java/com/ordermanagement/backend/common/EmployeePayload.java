@@ -9,10 +9,9 @@ public record EmployeePayload(
         String name,
 
         @NotNull(message = "Position is required")
-        EmployeePosition position
+        EmployeePosition position,
 
-        /*
-         * TODO: Add the assignedMachine field
-         * */
+        @NotNull(message = "Machine ID is required")
+        Long machineId
 ) {
 }

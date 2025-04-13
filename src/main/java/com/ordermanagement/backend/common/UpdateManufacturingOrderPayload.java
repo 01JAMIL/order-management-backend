@@ -22,6 +22,9 @@ public record UpdateManufacturingOrderPayload(
         LocalDateTime date,
 
         @NotNull(message = "Product ID is required")
-        Long productId
+        Long productId,
+
+        @NotNull(message = "Machine ID is required")
+        Long machineId
 ) {
 }

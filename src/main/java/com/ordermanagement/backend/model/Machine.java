@@ -1,6 +1,7 @@
 package com.ordermanagement.backend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ordermanagement.backend.common.MachineStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * Java class presents the Machine entity with all the required verifications
@@ -37,6 +39,14 @@ public class Machine {
 
     @Column()
     private LocalDateTime lastMaintenanceDate;
+
+    @OneToMany(mappedBy = "machine", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<ManufacturingOrder> manufacturingOrders;
+
+    @OneToMany(mappedBy = "employeeMachine", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Employee> employees;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)

@@ -47,6 +47,10 @@ public class ManufacturingOrder {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @ManyToOne
+    @JoinColumn(name = "machine_id", nullable = false)
+    private Machine machine;
+
 
     @CreatedDate
     @Column(updatable = false, nullable = false)

@@ -4,8 +4,10 @@ package com.ordermanagement.backend.service;
 import com.ordermanagement.backend.common.CreateManufacturingOrderPayload;
 import com.ordermanagement.backend.common.ManufacturingOrderStatus;
 import com.ordermanagement.backend.common.UpdateManufacturingOrderPayload;
+import com.ordermanagement.backend.model.Machine;
 import com.ordermanagement.backend.model.ManufacturingOrder;
 import com.ordermanagement.backend.model.Product;
+import com.ordermanagement.backend.repository.MachineRepository;
 import com.ordermanagement.backend.repository.ManufacturingOrderRepository;
 import com.ordermanagement.backend.repository.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -25,6 +27,7 @@ import java.util.Optional;
 public class ManufacturingOrderService {
     private final ManufacturingOrderRepository manufacturingOrderRepository;
     private final ProductRepository productRepository;
+    private final MachineRepository machineRepository;
 
     /**
      * Create a new manufacturing order.
@@ -38,12 +41,16 @@ public class ManufacturingOrderService {
         Product product = productRepository.findById(payload.productId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + payload.productId()));
 
+        Machine machine = machineRepository.findById(payload.machineId())
+                .orElseThrow(() -> new IllegalArgumentException("Machine not found with ID: " + payload.machineId()));
+
         ManufacturingOrder order = new ManufacturingOrder();
         order.setProject(payload.project());
         order.setStatus(ManufacturingOrderStatus.PENDING);
         order.setQuantity(payload.quantity());
         order.setDate(payload.date());
         order.setProduct(product);
+        order.setMachine(machine);
 
         return manufacturingOrderRepository.save(order);
     }
@@ -64,11 +71,15 @@ public class ManufacturingOrderService {
         Product product = productRepository.findById(payload.productId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + payload.productId()));
 
+        Machine machine = machineRepository.findById(payload.machineId())
+                .orElseThrow(() -> new IllegalArgumentException("Machine not found with ID: " + payload.machineId()));
+
         order.setProject(payload.project());
         order.setStatus(payload.status());
         order.setQuantity(payload.quantity());
         order.setDate(payload.date());
         order.setProduct(product);
+        order.setMachine(machine);
 
         return manufacturingOrderRepository.save(order);
     }
