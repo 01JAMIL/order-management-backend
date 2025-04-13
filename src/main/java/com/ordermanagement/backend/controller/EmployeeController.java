@@ -1,9 +1,11 @@
 package com.ordermanagement.backend.controller;
 
 
+import com.ordermanagement.backend.common.EmployeePayload;
 import com.ordermanagement.backend.common.MachinePayload;
+import com.ordermanagement.backend.model.Employee;
 import com.ordermanagement.backend.model.Machine;
-import com.ordermanagement.backend.service.MachineService;
+import com.ordermanagement.backend.service.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,63 +20,62 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/machines")
+@RequestMapping("/api/employees")
 @AllArgsConstructor
-public class MachineController {
+public class EmployeeController {
 
-    private final MachineService machineService;
-
+    private final EmployeeService employeeService;
 
     /**
-     * Retrieve all machines.
+     * Retrieve all employees.
      *
-     * @return List of all machines
+     * @return List of all employees
      */
     @GetMapping("/")
-    public ResponseEntity<List<Machine>> getAllMachines() {
-        return ResponseEntity.ok(this.machineService.findAllMachines());
+    public ResponseEntity<List<Employee>> getAllEmployees() {
+        return ResponseEntity.ok(this.employeeService.findAllEmployees());
     }
 
     /**
-     * Create a new machine.
+     * Create a new employee.
      *
      * @param payload Payload to create
-     * @return Created machine
+     * @return Created employee
      */
     @PostMapping("/")
-    public ResponseEntity<Machine> createMachine(
-            @Valid @RequestBody MachinePayload payload
+    public ResponseEntity<Employee> createEmployee(
+            @Valid @RequestBody EmployeePayload payload
     ) {
-        Machine savedMachine = this.machineService.saveMachine(payload);
-        return ResponseEntity.ok(savedMachine);
+        Employee savedEmployee = this.employeeService.saveEmployee(payload);
+        return ResponseEntity.ok(savedEmployee);
     }
 
     /**
-     * Update a machine by its ID.
+     * Update an employee by its ID.
      *
-     * @param id Machine ID
-     * @return ResponseEntity containing the updated machine if found, or 404 Not Found
+     * @param id Employee ID
+     * @return ResponseEntity containing the updated employee if found, or 404 Not Found
      */
 
     @PutMapping("/{id}")
-    public ResponseEntity<Machine> updateMachine(
+    public ResponseEntity<Employee> updateMachine(
             @PathVariable Long id,
-            @Valid @RequestBody MachinePayload payload
+            @Valid @RequestBody EmployeePayload payload
     ) {
-        return this.machineService.updateMachine(id, payload)
+        return this.employeeService.updateEmployee(id, payload)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     /**
-     * Delete a machine by its ID.
+     * Delete an employee by its ID.
      *
-     * @param id Machine ID
+     * @param id Employee ID
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMachine(@PathVariable Long id) {
-        this.machineService.deleteMachine(id);
-        return ResponseEntity.ok("Machine deleted successfully");
+        this.employeeService.deleteEmployee(id);
+        return ResponseEntity.ok("Employee deleted successfully");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -94,8 +95,8 @@ public class MachineController {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Map<String, String> handleMessageNotReadable(HttpMessageNotReadableException ex) {
         String message = ex.getMessage();
-        if (message.contains("MachineStatus")) {
-            return Map.of("status", "Invalid machine status. Must be one of: OPERATIONAL, UNDER_MAINTENANCE, OUT_OF_ORDER, IDLE, DECOMMISSIONED");
+        if (message.contains("EmployeePosition")) {
+            return Map.of("position", "Invalid employee position. Must be one of: OPERATOR, TECHNICIAN, SUPERVISOR, QUALITY_INSPECTOR, PRODUCTION_MANAGER, ASSEMBLER, MAINTENANCE_ENGINEER, LOGISTICS_COORDINATOR, SAFETY_OFFICER, SHIFT_LEADER, TOOLMAKER");
         }
         return Map.of("error", "Invalid request body: " + message);
     }
