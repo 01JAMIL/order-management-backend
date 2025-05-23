@@ -4,6 +4,7 @@ package com.ordermanagement.backend.controller;
 import com.ordermanagement.backend.common.CreateManufacturingOrderPayload;
 import com.ordermanagement.backend.common.ManufacturingOrderStatus;
 import com.ordermanagement.backend.common.UpdateManufacturingOrderPayload;
+import com.ordermanagement.backend.common.UpdateManufacturingOrderStatusPayload;
 import com.ordermanagement.backend.model.ManufacturingOrder;
 import com.ordermanagement.backend.service.ManufacturingOrderService;
 import jakarta.validation.Valid;
@@ -89,10 +90,10 @@ public class ManufacturingOrderController {
     public ResponseEntity<ManufacturingOrder> updateOrderStatus(
             @PathVariable String id,
             @Valid @RequestBody
-            @NotNull(message = "Status is required")
-            ManufacturingOrderStatus status
+            UpdateManufacturingOrderStatusPayload payload
     ) {
         Long orderId = Long.parseLong(id);
+        ManufacturingOrderStatus status = payload.status();
         ManufacturingOrder updatedOrder = this.manufacturingOrderService.updateStatus(orderId, status);
         return ResponseEntity.ok(updatedOrder);
     }

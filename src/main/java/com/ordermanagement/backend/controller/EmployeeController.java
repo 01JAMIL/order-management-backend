@@ -58,7 +58,7 @@ public class EmployeeController {
      */
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateMachine(
+    public ResponseEntity<Employee> updateEmployee(
             @PathVariable Long id,
             @Valid @RequestBody EmployeePayload payload
     ) {
@@ -73,7 +73,7 @@ public class EmployeeController {
      * @param id Employee ID
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMachine(@PathVariable Long id) {
+    public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
         this.employeeService.deleteEmployee(id);
         return ResponseEntity.ok("Employee deleted successfully");
     }
